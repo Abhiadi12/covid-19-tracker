@@ -13,6 +13,8 @@ import TableRenderer from "./TableRenderer";
 import LineGraph from "./LineGraph";
 import Map from "./Map";
 import numeral from "numeral";
+import { useTheme } from "@material-ui/core/styles";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -35,6 +37,13 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: "#ff3d00",
     },
   },
+  infoBox: {
+    width: "210px",
+    height: "180px",
+    [theme.breakpoints.down("sm")]: {
+      marginBottom: "1em",
+    },
+  },
 }));
 
 function App() {
@@ -43,9 +52,12 @@ function App() {
   const [countries, setSelectCountries] = React.useState([]);
   const [status, setStatus] = React.useState({});
   const [casesType, setCasesType] = React.useState("cases");
-  const [mapCenter, setMapCenter] = React.useState([34.80746, -40.4796]);
+  const [mapCenter, setMapCenter] = React.useState([25.2744, 133.7751]);
   const [zoom, setZoom] = React.useState(3);
   const useFlagRef = React.useRef(true);
+  const theme = useTheme();
+  const matchesMd = useMediaQuery(theme.breakpoints.down("md"));
+  const matchesSm = useMediaQuery(theme.breakpoints.down("sm"));
 
   React.useEffect(() => {
     const initializeCountry = async () => {
@@ -119,8 +131,8 @@ function App() {
   return (
     <div className="App">
       {/* <h1 style={{ textAlign: "center", color: "red" }}>Covid 19 tracker</h1> */}
-      <Grid container>
-        <Grid item md={8} style={{ border: "1px solid red", padding: "1em" }}>
+      <Grid container direction={matchesMd ? "column" : "row"}>
+        <Grid item lg={8} style={{ border: "1px solid red", padding: "1em" }}>
           <Grid container direction="column">
             <Grid item container justify="space-between">
               <Grid item>
@@ -154,10 +166,12 @@ function App() {
             <Grid
               item
               container
-              justify="space-evenly"
+              direction={matchesSm ? "column" : "row"}
+              alignItems={matchesSm ? "center" : undefined}
+              justify={matchesSm ? undefined : "space-evenly"}
               style={{ margin: "1em 0 1em 0" }}
             >
-              <Grid item>
+              <Grid item className={classes.infoBox}>
                 <Card>
                   <CardContent>
                     <Typography variant="h6" color="primary">
@@ -182,7 +196,7 @@ function App() {
                   </CardContent>
                 </Card>
               </Grid>
-              <Grid item>
+              <Grid item className={classes.infoBox}>
                 <Card className={classes.recoverCard}>
                   <CardContent>
                     <Typography variant="h6" color="primary">
@@ -207,7 +221,7 @@ function App() {
                   </CardContent>
                 </Card>
               </Grid>
-              <Grid item>
+              <Grid item className={classes.infoBox}>
                 <Card className={classes.deathCard}>
                   <CardContent>
                     <Typography variant="h6" color="primary">
@@ -243,7 +257,7 @@ function App() {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item style={{ border: "1px solid red", padding: "1em" }} md={4}>
+        <Grid item style={{ border: "1px solid red", padding: "1em" }} lg={4}>
           <Grid container direction="column">
             <Grid item>
               <Typography variant="body1" color="secondary">
@@ -252,30 +266,66 @@ function App() {
               <TableRenderer rowData={countries} />
             </Grid>
 
-            <Grid item style={{ margin: "1em 0 1em 0" }}>
-              <Typography variant="body1" color="secondary">
-                last 4 months analysys
-              </Typography>
-
-              <FormControl style={{ marginTop: "1em", marginBottom: "2em" }}>
-                <Select
-                  id="caseType-select"
-                  value={casesType}
-                  onChange={handleCasesChange}
-                >
-                  <MenuItem value="cases" selected>
-                    Active Cases
-                  </MenuItem>
-                  <MenuItem value="deaths">Death Cases</MenuItem>
-                  <MenuItem value="recovered">Recovered Cases</MenuItem>
-                </Select>
-              </FormControl>
-
-              <LineGraph casesType={casesType} />
+            <Grid
+              item
+              container
+              direction="column"
+              style={{
+                margin: "1em 0 1em 0",
+                marginTop: matchesMd ? "2em" : 0,
+              }}
+            >
+              <Grid item>
+                <Typography variant="body1" color="secondary">
+                  last 4 months analysys
+                </Typography>
+              </Grid>
+              <Grid item>
+                <FormControl style={{ marginTop: "1em", marginBottom: "2em" }}>
+                  <Select
+                    id="caseType-select"
+                    value={casesType}
+                    onChange={handleCasesChange}
+                  >
+                    <MenuItem value="cases" selected>
+                      Active Cases
+                    </MenuItem>
+                    <MenuItem value="deaths">Death Cases</MenuItem>
+                    <MenuItem value="recovered">Recovered Cases</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item>
+                <LineGraph casesType={casesType} />
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
       </Grid>
+
+      {/* <Grid container>
+        <Grid item style={{ margin: "1em 0 1em 0" }}>
+          <Typography variant="body1" color="secondary">
+            last 4 months analysys
+          </Typography>
+
+          <FormControl style={{ marginTop: "1em", marginBottom: "2em" }}>
+            <Select
+              id="caseType-select"
+              value={casesType}
+              onChange={handleCasesChange}
+            >
+              <MenuItem value="cases" selected>
+                Active Cases
+              </MenuItem>
+              <MenuItem value="deaths">Death Cases</MenuItem>
+              <MenuItem value="recovered">Recovered Cases</MenuItem>
+            </Select>
+          </FormControl>
+
+          <LineGraph casesType={casesType} />
+        </Grid>
+      </Grid> */}
     </div>
   );
 }

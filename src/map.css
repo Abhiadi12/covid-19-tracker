@@ -26,3 +26,8 @@
   width: 800px;
   height: 800px;
 }
+@media only screen and (max-width: 1280px) {
+  .leaflet-container {
+    width: 100%;
+  }
+}

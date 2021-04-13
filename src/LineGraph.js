@@ -1,6 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
 import numeral from "numeral";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: "400px",
+    [theme.breakpoints.down("lg")]: {
+      maxWidth: "600px",
+      marginLeft: "auto",
+      marginRight: "auto",
+    },
+  },
+}));
 
 const options = {
   legend: {
@@ -72,6 +84,7 @@ const buildChartData = (data, casesType) => {
 
 function LineGraph({ casesType }) {
   const [data, setData] = useState({});
+  const classes = useStyles();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,7 +102,7 @@ function LineGraph({ casesType }) {
   }, [casesType]);
 
   return (
-    <div>
+    <div className={classes.root}>
       {data?.length > 0 && (
         <Line
           data={{

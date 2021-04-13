@@ -20,14 +20,17 @@ const CustomTableCell = withStyles((theme) => ({
 
 const styles = (theme) => ({
   root: {
-    width: "100%",
+    maxWidth: "400px",
     marginTop: "1em",
     height: "500px",
     overflowY: "auto",
+    [theme.breakpoints.down("lg")]: {
+      maxWidth: "600px",
+      marginLeft: "auto",
+      marginRight: "auto",
+    },
   },
-  table: {
-    maxWidth: "100%",
-  },
+
   row: {
     "&:nth-of-type(odd)": {
       backgroundColor: theme.palette.background.default,
@@ -42,7 +45,7 @@ function TableRenderer(props) {
 
   return (
     <Paper className={classes.root}>
-      <Table className={classes.table}>
+      <Table style={{ border: "2px solid green" }}>
         <TableHead>
           <TableRow>
             <CustomTableCell>Countries</CustomTableCell>
