@@ -7,6 +7,7 @@ import Select from "@material-ui/core/Select";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Chip from "@material-ui/core/Chip";
+import Switch from "@material-ui/core/Switch";
 import axios from "axios";
 import { makeStyles } from "@material-ui/core/styles";
 import TableRenderer from "./TableRenderer";
@@ -15,6 +16,7 @@ import Map from "./Map";
 import numeral from "numeral";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -58,6 +60,16 @@ function App() {
   const theme = useTheme();
   const matchesMd = useMediaQuery(theme.breakpoints.down("md"));
   const matchesSm = useMediaQuery(theme.breakpoints.down("sm"));
+  const [darkState, setDarkState] = React.useState(false);
+  const palletType = darkState ? "dark" : "light";
+  const darkTheme = createMuiTheme({
+    palette: {
+      type: palletType,
+    },
+  });
+  const handleThemeChange = () => {
+    setDarkState(!darkState);
+  };
 
   React.useEffect(() => {
     const initializeCountry = async () => {
@@ -129,181 +141,190 @@ function App() {
     setCasesType(event.target.value);
   };
   return (
-    <div className="App">
-      {/* <h1 style={{ textAlign: "center", color: "red" }}>Covid 19 tracker</h1> */}
-      <Grid container direction={matchesMd ? "column" : "row"}>
-        <Grid item lg={8} style={{ border: "1px solid red", padding: "1em" }}>
-          <Grid container direction="column">
-            <Grid item container justify="space-between">
-              <Grid item>
-                <Typography variant="h4" color="error">
-                  Covid-19-tracker
-                </Typography>
-              </Grid>
+    <ThemeProvider theme={darkTheme}>
+      <div
+        className="App"
+        style={{ backgroundColor: darkState ? "black" : "white" }}
+      >
+        {/* <h1 style={{ textAlign: "center", color: "red" }}>Covid 19 tracker</h1> */}
+        <Grid container direction={matchesMd ? "column" : "row"}>
+          <Grid item lg={8} style={{ border: "1px solid red", padding: "1em" }}>
+            <Grid container direction="column">
+              <Grid item container justify="space-between">
+                <Grid item>
+                  <Typography variant="h4" color="error">
+                    Covid-19-tracker
+                  </Typography>
+                </Grid>
 
-              <Grid item>
-                <FormControl className={classes.formControl}>
-                  <Select
-                    id="country-select"
-                    value={selectOption}
-                    onChange={handleChange}
-                  >
-                    <MenuItem value="worldwide" selected>
-                      Worldwide
-                    </MenuItem>
-                    {countries.map((countryObject) => (
-                      <MenuItem
-                        key={countryObject.country}
-                        value={countryObject.country}
-                      >
-                        {countryObject.country}
+                <Grid item>
+                  <FormControl className={classes.formControl}>
+                    <Select
+                      id="country-select"
+                      value={selectOption}
+                      onChange={handleChange}
+                    >
+                      <MenuItem value="worldwide" selected>
+                        Worldwide
                       </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                      {countries.map((countryObject) => (
+                        <MenuItem
+                          key={countryObject.country}
+                          value={countryObject.country}
+                        >
+                          {countryObject.country}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item>
+                  <Switch checked={darkState} onChange={handleThemeChange} />
+                </Grid>
               </Grid>
-            </Grid>
-            <Grid
-              item
-              container
-              direction={matchesSm ? "column" : "row"}
-              alignItems={matchesSm ? "center" : undefined}
-              justify={matchesSm ? undefined : "space-evenly"}
-              style={{ margin: "1em 0 1em 0" }}
-            >
-              <Grid item className={classes.infoBox}>
-                <Card>
-                  <CardContent>
-                    <Typography variant="h6" color="primary">
-                      Active Cases
-                    </Typography>
-                    <Typography variant="subtitle1">
-                      Total Active Cases
-                    </Typography>
-                    <Chip
-                      color="primary"
-                      size="small"
-                      label={numeral(status.cases).format("0 a")}
-                    />
-                    <Typography variant="subtitle1">
-                      Today Active Cases
-                    </Typography>
-                    <Chip
-                      color="primary"
-                      size="small"
-                      label={status.todayCases}
-                    />
-                  </CardContent>
-                </Card>
+              <Grid
+                item
+                container
+                direction={matchesSm ? "column" : "row"}
+                alignItems={matchesSm ? "center" : undefined}
+                justify={matchesSm ? undefined : "space-evenly"}
+                style={{ margin: "1em 0 1em 0" }}
+              >
+                <Grid item className={classes.infoBox}>
+                  <Card>
+                    <CardContent>
+                      <Typography variant="h6" color="primary">
+                        Active Cases
+                      </Typography>
+                      <Typography variant="subtitle1">
+                        Total Active Cases
+                      </Typography>
+                      <Chip
+                        color="primary"
+                        size="small"
+                        label={numeral(status.cases).format("0 a")}
+                      />
+                      <Typography variant="subtitle1">
+                        Today Active Cases
+                      </Typography>
+                      <Chip
+                        color="primary"
+                        size="small"
+                        label={status.todayCases}
+                      />
+                    </CardContent>
+                  </Card>
+                </Grid>
+                <Grid item className={classes.infoBox}>
+                  <Card className={classes.recoverCard}>
+                    <CardContent>
+                      <Typography variant="h6" color="primary">
+                        Recovered Cases
+                      </Typography>
+                      <Typography variant="subtitle1">
+                        Total Recovered Cases
+                      </Typography>
+                      <Chip
+                        color="primary"
+                        size="small"
+                        label={numeral(status.recovered).format("0 a")}
+                      />
+                      <Typography variant="subtitle1">
+                        Today Recovered Cases
+                      </Typography>
+                      <Chip
+                        color="primary"
+                        size="small"
+                        label={status.todayRecovered}
+                      />
+                    </CardContent>
+                  </Card>
+                </Grid>
+                <Grid item className={classes.infoBox}>
+                  <Card className={classes.deathCard}>
+                    <CardContent>
+                      <Typography variant="h6" color="primary">
+                        Death Cases
+                      </Typography>
+                      <Typography variant="subtitle1">
+                        Total Death Cases
+                      </Typography>
+                      <Chip
+                        color="primary"
+                        size="small"
+                        label={numeral(status.deaths).format("0 a")}
+                      />
+                      <Typography variant="subtitle1">
+                        Today Death Cases
+                      </Typography>
+                      <Chip
+                        color="primary"
+                        size="small"
+                        label={status.todayDeaths}
+                      />
+                    </CardContent>
+                  </Card>
+                </Grid>
               </Grid>
-              <Grid item className={classes.infoBox}>
-                <Card className={classes.recoverCard}>
-                  <CardContent>
-                    <Typography variant="h6" color="primary">
-                      Recovered Cases
-                    </Typography>
-                    <Typography variant="subtitle1">
-                      Total Recovered Cases
-                    </Typography>
-                    <Chip
-                      color="primary"
-                      size="small"
-                      label={numeral(status.recovered).format("0 a")}
-                    />
-                    <Typography variant="subtitle1">
-                      Today Recovered Cases
-                    </Typography>
-                    <Chip
-                      color="primary"
-                      size="small"
-                      label={status.todayRecovered}
-                    />
-                  </CardContent>
-                </Card>
+              <Grid item>
+                <Map
+                  countries={countries}
+                  center={mapCenter}
+                  zoom={zoom}
+                  casesType={casesType}
+                />
               </Grid>
-              <Grid item className={classes.infoBox}>
-                <Card className={classes.deathCard}>
-                  <CardContent>
-                    <Typography variant="h6" color="primary">
-                      Death Cases
-                    </Typography>
-                    <Typography variant="subtitle1">
-                      Total Death Cases
-                    </Typography>
-                    <Chip
-                      color="primary"
-                      size="small"
-                      label={numeral(status.deaths).format("0 a")}
-                    />
-                    <Typography variant="subtitle1">
-                      Today Death Cases
-                    </Typography>
-                    <Chip
-                      color="primary"
-                      size="small"
-                      label={status.todayDeaths}
-                    />
-                  </CardContent>
-                </Card>
-              </Grid>
-            </Grid>
-            <Grid item>
-              <Map
-                countries={countries}
-                center={mapCenter}
-                zoom={zoom}
-                casesType={casesType}
-              />
             </Grid>
           </Grid>
-        </Grid>
-        <Grid item style={{ border: "1px solid red", padding: "1em" }} lg={4}>
-          <Grid container direction="column">
-            <Grid item>
-              <Typography variant="body1" color="secondary">
-                Countries based on total number of cases
-              </Typography>
-              <TableRenderer rowData={countries} />
-            </Grid>
-
-            <Grid
-              item
-              container
-              direction="column"
-              style={{
-                margin: "1em 0 1em 0",
-                marginTop: matchesMd ? "2em" : 0,
-              }}
-            >
+          <Grid item style={{ border: "1px solid red", padding: "1em" }} lg={4}>
+            <Grid container direction="column">
               <Grid item>
                 <Typography variant="body1" color="secondary">
-                  last 4 months analysys
+                  Countries based on total number of cases
                 </Typography>
+                <TableRenderer rowData={countries} />
               </Grid>
-              <Grid item>
-                <FormControl style={{ marginTop: "1em", marginBottom: "2em" }}>
-                  <Select
-                    id="caseType-select"
-                    value={casesType}
-                    onChange={handleCasesChange}
+
+              <Grid
+                item
+                container
+                direction="column"
+                style={{
+                  margin: "1em 0 1em 0",
+                  marginTop: matchesMd ? "2em" : 0,
+                }}
+              >
+                <Grid item>
+                  <Typography variant="body1" color="secondary">
+                    last 4 months analysys
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <FormControl
+                    style={{ marginTop: "1em", marginBottom: "2em" }}
                   >
-                    <MenuItem value="cases" selected>
-                      Active Cases
-                    </MenuItem>
-                    <MenuItem value="deaths">Death Cases</MenuItem>
-                    <MenuItem value="recovered">Recovered Cases</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item>
-                <LineGraph casesType={casesType} />
+                    <Select
+                      id="caseType-select"
+                      value={casesType}
+                      onChange={handleCasesChange}
+                    >
+                      <MenuItem value="cases" selected>
+                        Active Cases
+                      </MenuItem>
+                      <MenuItem value="deaths">Death Cases</MenuItem>
+                      <MenuItem value="recovered">Recovered Cases</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item>
+                  <LineGraph casesType={casesType} />
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
         </Grid>
-      </Grid>
 
-      {/* <Grid container>
+        {/* <Grid container>
         <Grid item style={{ margin: "1em 0 1em 0" }}>
           <Typography variant="body1" color="secondary">
             last 4 months analysys
@@ -326,7 +347,8 @@ function App() {
           <LineGraph casesType={casesType} />
         </Grid>
       </Grid> */}
-    </div>
+      </div>
+    </ThemeProvider>
   );
 }
 
