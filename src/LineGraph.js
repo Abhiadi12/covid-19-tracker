@@ -6,6 +6,7 @@ import { makeStyles } from "@material-ui/core/styles";
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "400px",
+    height: "150px",
     [theme.breakpoints.down("lg")]: {
       maxWidth: "600px",
       marginLeft: "auto",
@@ -59,6 +60,25 @@ const options = {
   },
 };
 
+const vaccineLineChartoptions = {
+  scales: {
+    yAxes: [
+      {
+        gridLines: {
+          display: false,
+        },
+
+        ticks: {
+          beginAtZero: true,
+          callback: function (value, index, values) {
+            return numeral(value).format("0a");
+          },
+        },
+      },
+    ],
+  },
+};
+
 const buildChartData = (data, casesType) => {
   console.log(data);
   let chartData = [];
@@ -82,8 +102,11 @@ const buildChartData = (data, casesType) => {
   return chartData;
 };
 
-function LineGraph({ casesType }) {
+function LineGraph({ casesType, country }) {
+  console.log(country);
   const [data, setData] = useState({});
+  const [vaccineInfo, setVaccineInfo] = useState({});
+
   const classes = useStyles();
 
   useEffect(() => {
@@ -101,6 +124,21 @@ function LineGraph({ casesType }) {
     fetchData();
   }, [casesType]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetch(
+        `https://disease.sh/v3/covid-19/vaccine/coverage/countries/${country}?lastdays=30&fullData=India`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data["timeline"]);
+          setVaccineInfo(data["timeline"]);
+        });
+    };
+    if (country !== "worldwide") fetchData();
+  }, [country]);
+
+  console.log(vaccineInfo);
   return (
     <div className={classes.root}>
       {data?.length > 0 && (
@@ -117,6 +155,25 @@ function LineGraph({ casesType }) {
           options={options}
         />
       )}
+
+      <div style={{ marginTop: "5em" }}>
+        {Object.keys(vaccineInfo).length > 0 && (
+          <Line
+            data={{
+              labels: Object.keys(vaccineInfo),
+              datasets: [
+                {
+                  label: `# of vaccine taken ${country}`,
+                  backgroundColor: "rgba(166, 240, 110)",
+                  borderColor: "#CC1034",
+                  data: Object.values(vaccineInfo),
+                },
+              ],
+            }}
+            options={vaccineLineChartoptions}
+          />
+        )}
+      </div>
     </div>
   );
 }

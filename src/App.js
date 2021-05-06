@@ -148,7 +148,7 @@ function App() {
       >
         {/* <h1 style={{ textAlign: "center", color: "red" }}>Covid 19 tracker</h1> */}
         <Grid container direction={matchesMd ? "column" : "row"}>
-          <Grid item lg={8} style={{ border: "1px solid red", padding: "1em" }}>
+          <Grid item lg={8} style={{ padding: "1em" }}>
             <Grid container direction="column">
               <Grid item container justify="space-between">
                 <Grid item>
@@ -276,7 +276,7 @@ function App() {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item style={{ border: "1px solid red", padding: "1em" }} lg={4}>
+          <Grid item style={{ padding: "1em" }} lg={4}>
             <Grid container direction="column">
               <Grid item>
                 <Typography variant="body1" color="secondary">
@@ -317,7 +317,7 @@ function App() {
                   </FormControl>
                 </Grid>
                 <Grid item>
-                  <LineGraph casesType={casesType} />
+                  <LineGraph casesType={casesType} country={selectOption} />
                 </Grid>
               </Grid>
             </Grid>
